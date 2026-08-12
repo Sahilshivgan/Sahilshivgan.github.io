@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sahil Shivgan — Software Engineer, AI/ML</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<style>
+/* ============ CONFIG-DRIVEN TOKENS ============ */
+:root{
+  --bg:#0a0e14; --panel:#121a24; --panel-2:#17212d; --line:#232f3d;
+  --text:#eef3f8; --muted:#8b98a5; --muted-2:#526270;
+  --cyan:#4fd1ff; --violet:#a78bfa; --green:#34d399; --amber:#fbbf24; --pink:#f472b6;
+  --font-d:'Space Grotesk',sans-serif; --font-b:'Inter',sans-serif; --font-m:'JetBrains Mono',monospace;
+  --radius:12px;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg); color:var(--text); font-family:var(--font-b); line-height:1.6; overflow-x:hidden;}
+a{color:inherit; text-decoration:none;}
+::selection{background:var(--cyan); color:#03090f;}
+:focus-visible{outline:2px solid var(--cyan); outline-offset:3px;}
+@media (prefers-reduced-motion: reduce){ *{animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important; scroll-behavior:auto !important;} }
+
+.wrap{max-width:1160px; margin:0 auto; padding:0 28px;}
+.eyebrow{font-family:var(--font-m); font-size:12px; letter-spacing:.14em; text-transform:uppercase;}
+h1,h2,h3{font-family:var(--font-d); font-weight:600; letter-spacing:-.01em;}
+.muted{color:var(--muted);}
+.mono{font-family:var(--font-m);}
+.grad-text{background:linear-gradient(90deg,var(--cyan),var(--violet)); -webkit-background-clip:text; background-clip:text; color:transparent;}
+
+/* ============ NAV ============ */
+nav{position:fixed; top:0; left:0; right:0; z-index:60; backdrop-filter:blur(10px); background:rgba(10,14,20,.75); border-bottom:1px solid var(--line);}
+.nav-row{display:flex; align-items:center; justify-content:space-between; height:64px;}
+.nav-brand{font-family:var(--font-m); font-size:14px; display:flex; align-items:center; gap:8px;}
+.nav-brand .dot{width:7px; height:7px; border-radius:50%; background:var(--green); box-shadow:0 0 8px var(--green); animation:blink 2.4s ease-in-out infinite;}
+@keyframes blink{0%,100%{opacity:1;} 50%{opacity:.35;}}
+.nav-links{display:flex; gap:26px; font-size:13px; color:var(--muted);}
+.nav-links a{transition:color .15s; position:relative;}
+.nav-links a:hover{color:var(--text);}
+.nav-links .num{color:var(--muted-2); font-family:var(--font-m); font-size:11px; margin-right:5px;}
+@media(max-width:760px){ .nav-links{display:none;} }
+
+/* ============ HERO + ANIMATED MESH ============ */
+.hero{padding:150px 0 90px; position:relative; overflow:hidden;}
+.mesh-bg{position:absolute; inset:0; z-index:-1; opacity:.55; filter:blur(60px);}
+.blob{position:absolute; border-radius:50%; mix-blend-mode:screen;}
+.b1{width:420px; height:420px; background:radial-gradient(circle,var(--cyan),transparent 70%); top:-120px; left:-80px;}
+.b2{width:380px; height:380px; background:radial-gradient(circle,var(--violet),transparent 70%); top:60px; right:-100px;}
+.b3{width:320px; height:320px; background:radial-gradient(circle,var(--pink),transparent 70%); bottom:-140px; left:35%;}
+
+.hero-grid{display:grid; grid-template-columns:1.1fr .9fr; gap:56px; align-items:center;}
+@media(max-width:900px){ .hero-grid{grid-template-columns:1fr;} }
+.hero .eyebrow{color:var(--cyan);}
+.hero h1{font-size:clamp(34px,5vw,54px); line-height:1.08; margin:16px 0 20px;}
+.hero p.lead{font-size:17px; color:var(--muted); max-width:520px; margin-bottom:28px;}
+.cta-row{display:flex; gap:14px; flex-wrap:wrap;}
+.btn{font-family:var(--font-m); font-size:13px; padding:11px 20px; border-radius:8px; border:1px solid var(--line); transition:transform .2s, border-color .2s, background .2s; display:inline-block; will-change:transform;}
+.btn-primary{background:linear-gradient(90deg,var(--cyan),var(--violet)); color:#03090f; border-color:transparent; font-weight:600;}
+.btn-ghost{color:var(--text);}
+.btn-ghost:hover{border-color:var(--muted); background:var(--panel);}
+
+/* live pipeline panel */
+.pipeline-panel{background:var(--panel); border:1px solid var(--line); border-radius:var(--radius); padding:20px; position:relative; backdrop-filter:blur(4px);}
+.pipeline-head{display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; font-family:var(--font-m); font-size:11px; color:var(--muted);}
+.pipeline-head .live{color:var(--green); display:flex; align-items:center; gap:6px;}
+.pipeline-head .live .dot{width:6px; height:6px; border-radius:50%; background:var(--green); animation:blink 1.6s ease-in-out infinite;}
+.pipeline-svg{width:100%; height:auto; display:block;}
+.node-label{font-family:var(--font-m); font-size:9.5px; fill:var(--muted); text-anchor:middle;}
+.node-box{fill:var(--panel-2); stroke:var(--line); stroke-width:1;}
+.flow-dot{fill:var(--cyan);}
+.stat-row{display:flex; justify-content:space-between; margin-top:16px; padding-top:16px; border-top:1px solid var(--line); font-family:var(--font-m); font-size:12px;}
+.stat{text-align:center; flex:1;}
+.stat .v{font-size:18px; font-weight:600; color:var(--text);}
+.stat .l{color:var(--muted-2); font-size:9.5px; text-transform:uppercase; letter-spacing:.08em; margin-top:2px;}
+.stat .v.green{color:var(--green);}
+.stat .v.amber{color:var(--amber);}
+
+/* ============ SECTION SHELL ============ */
+section{padding:96px 0; border-top:1px solid var(--line); position:relative;}
+.section-head{display:flex; align-items:baseline; gap:14px; margin-bottom:42px;}
+.section-head h2{font-size:28px;}
+.section-head .idx{font-family:var(--font-m); font-size:13px; color:var(--muted-2);}
+.reveal{opacity:0; transform:translateY(24px);}
+
+/* ============ ABOUT ============ */
+.about-grid{display:grid; grid-template-columns:2fr 1fr; gap:50px;}
+@media(max-width:800px){ .about-grid{grid-template-columns:1fr;} }
+.about-grid p{color:var(--muted); font-size:15.5px; margin-bottom:16px; max-width:620px;}
+.about-grid strong{color:var(--text); font-weight:500;}
+.fact-list{display:flex; flex-direction:column; gap:14px; font-family:var(--font-m); font-size:12.5px;}
+.fact-list .f-row{display:flex; justify-content:space-between; border-bottom:1px solid var(--line); padding-bottom:10px; gap:12px;}
+.fact-list .f-k{color:var(--muted-2);}
+.fact-list .f-v{color:var(--text); text-align:right;}
+
+/* ============ PROJECT / TILT CARDS ============ */
+.project{background:var(--panel); border:1px solid var(--line); border-radius:var(--radius); padding:28px; margin-bottom:22px; transform-style:preserve-3d; will-change:transform; position:relative; overflow:hidden;}
+.project::before{content:''; position:absolute; inset:0; background:linear-gradient(135deg,transparent,rgba(79,209,255,.06)); opacity:0; transition:opacity .3s; pointer-events:none;}
+.project:hover::before{opacity:1;}
+.project-top{display:flex; justify-content:space-between; align-items:flex-start; gap:20px; flex-wrap:wrap; margin-bottom:14px;}
+.project h3{font-size:19px; margin-bottom:6px;}
+.project .stack{color:var(--muted); font-size:12.5px; font-family:var(--font-m);}
+.project .desc{color:var(--muted); font-size:14.5px; margin:14px 0; max-width:680px;}
+.project .link{font-family:var(--font-m); font-size:12px; color:var(--cyan); white-space:nowrap; border:1px solid var(--line); padding:8px 14px; border-radius:6px; transition:.15s;}
+.project .link:hover{border-color:var(--cyan); background:rgba(79,209,255,.08);}
+.metrics{display:flex; gap:24px; flex-wrap:wrap; margin-top:16px; padding-top:16px; border-top:1px solid var(--line);}
+.metric{font-family:var(--font-m);}
+.metric .mv{font-size:20px; font-weight:600; color:var(--green);}
+.metric .ml{font-size:10px; color:var(--muted-2); text-transform:uppercase; letter-spacing:.06em;}
+.tags{display:flex; gap:8px; flex-wrap:wrap; margin-top:14px;}
+.tag{font-family:var(--font-m); font-size:11px; color:var(--muted); background:var(--panel-2); border:1px solid var(--line); padding:4px 9px; border-radius:5px;}
+.arch-strip{display:flex; align-items:center; gap:0; margin-top:16px; font-family:var(--font-m); font-size:11px; color:var(--muted); flex-wrap:wrap;}
+.arch-strip .a-step{background:var(--panel-2); border:1px solid var(--line); padding:6px 10px; border-radius:5px;}
+.arch-strip .a-arrow{color:var(--muted-2); padding:0 8px;}
+
+/* ============ ABSTRACT SVG ILLUSTRATION ============ */
+.illustration{width:100%; max-height:170px; margin-bottom:18px; border-radius:var(--radius); overflow:hidden; border:1px solid var(--line); background:var(--panel-2);}
+
+/* ============ GITHUB LIVE GRID ============ */
+.gh-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:18px;}
+.gh-card{background:var(--panel); border:1px solid var(--line); border-radius:var(--radius); padding:20px; transition:border-color .2s, transform .2s;}
+.gh-card:hover{border-color:var(--violet); transform:translateY(-3px);}
+.gh-card h4{font-family:var(--font-m); font-size:14px; color:var(--cyan); margin-bottom:8px; word-break:break-word;}
+.gh-card p{font-size:12.5px; color:var(--muted); margin-bottom:14px; min-height:32px;}
+.gh-meta{display:flex; gap:14px; font-family:var(--font-m); font-size:11px; color:var(--muted-2);}
+.gh-meta span{display:flex; align-items:center; gap:4px;}
+.gh-skel{height:150px; border-radius:var(--radius); background:linear-gradient(90deg,var(--panel) 25%,var(--panel-2) 50%,var(--panel) 75%); background-size:200% 100%; animation:shimmer 1.4s infinite;}
+@keyframes shimmer{0%{background-position:200% 0;} 100%{background-position:-200% 0;}}
+.gh-status{font-family:var(--font-m); font-size:11.5px; color:var(--muted-2); margin-top:14px;}
+
+/* ============ CERTIFICATIONS ============ */
+.cert-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:18px;}
+.cert-card{background:var(--panel); border:1px solid var(--line); border-radius:var(--radius); padding:22px; display:flex; gap:16px; align-items:flex-start;}
+.cert-badge{width:42px; height:42px; border-radius:9px; flex-shrink:0; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg,var(--amber),var(--pink)); font-family:var(--font-m); font-weight:700; color:#0a0e14; font-size:15px;}
+.cert-card h4{font-size:14.5px; margin-bottom:4px;}
+.cert-card .c-org{font-size:12px; color:var(--muted); font-family:var(--font-m);}
+.cert-card .c-date{font-size:10.5px; color:var(--muted-2); font-family:var(--font-m); margin-top:6px;}
+.cert-edit-note{font-family:var(--font-m); font-size:11.5px; color:var(--muted-2); margin-top:16px; border:1px dashed var(--line); padding:12px 16px; border-radius:8px;}
+
+/* ============ SKILLS ============ */
+.skills-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:28px;}
+.skill-cat h4{font-family:var(--font-m); font-size:11px; text-transform:uppercase; letter-spacing:.08em; margin-bottom:14px;}
+.skill-cat ul{list-style:none; display:flex; flex-direction:column; gap:9px;}
+.skill-cat li{font-size:14px; color:var(--muted); position:relative; padding-left:16px;}
+.skill-cat li::before{content:''; position:absolute; left:0; top:8px; width:5px; height:5px; background:var(--muted-2); border-radius:50%;}
+
+/* ============ EXPERIENCE TIMELINE ============ */
+.timeline{display:flex; flex-direction:column; gap:0;}
+.t-item{display:grid; grid-template-columns:130px 1fr; gap:24px; padding:22px 0; border-bottom:1px solid var(--line); position:relative;}
+.t-item:last-child{border-bottom:none;}
+.t-date{font-family:var(--font-m); font-size:12px; color:var(--muted-2); padding-top:2px;}
+.t-item h3{font-size:16.5px; margin-bottom:6px;}
+.t-item .t-org{color:var(--cyan); font-size:13px; font-family:var(--font-m); margin-bottom:8px;}
+.t-item p{color:var(--muted); font-size:14px; max-width:600px;}
+
+/* ============ LIVE DEMO PANEL ============ */
+.demo-panel{background:var(--panel); border:1px solid var(--line); border-radius:var(--radius); overflow:hidden;}
+.demo-frame-wrap{aspect-ratio:16/9; background:var(--panel-2); display:flex; align-items:center; justify-content:center; position:relative;}
+.demo-frame-wrap iframe{width:100%; height:100%; border:0; display:none;}
+.demo-empty{text-align:center; padding:30px; max-width:440px;}
+.demo-empty .ico{width:46px; height:46px; margin:0 auto 16px; border-radius:12px; background:linear-gradient(135deg,var(--cyan),var(--violet)); display:flex; align-items:center; justify-content:center; font-family:var(--font-m); font-weight:700; color:#0a0e14;}
+.demo-empty h4{font-size:16px; margin-bottom:8px;}
+.demo-empty p{font-size:13px; color:var(--muted); margin-bottom:6px;}
+.demo-steps{padding:20px 26px; border-top:1px solid var(--line); font-family:var(--font-m); font-size:12px; color:var(--muted);}
+.demo-steps code{background:var(--panel-2); padding:2px 6px; border-radius:4px; color:var(--cyan);}
+.demo-steps li{margin-bottom:6px; list-style:none;}
+
+/* ============ CONTACT ============ */
+.contact{text-align:center; padding-bottom:110px;}
+.contact h2{font-size:34px; margin-bottom:14px;}
+.contact p{color:var(--muted); margin-bottom:32px;}
+.contact-links{display:flex; justify-content:center; gap:16px; flex-wrap:wrap;}
+footer{border-top:1px solid var(--line); padding:26px 0; text-align:center; font-family:var(--font-m); font-size:11.5px; color:var(--muted-2);}
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+  EDIT ZONE — change these values to customize the whole site
+============================================================= -->
+<script>
+  window.SITE_CONFIG = {
+    githubUsername: "Sahilshivgan",
+    githubRepoCount: 6,
+    // Paste a public URL here (e.g. an ngrok/localtunnel URL pointing at your
+    // local Streamlit dashboard) to make the Live Demo panel show your REAL
+    // running project. Leave empty to show setup instructions instead.
+    liveDemoUrl: "",
+    certifications: [
+      // Add real certifications here — placeholders shown until edited.
+      { name: "Add your certification name", org: "Issuing organization", date: "Year", tag: "CERT" }
+    ]
+  };
+</script>
+
+<nav>
+  <div class="wrap nav-row">
+    <div class="nav-brand"><span class="dot"></span> sahil@portfolio:~$</div>
+    <div class="nav-links">
+      <a href="#about"><span class="num">01</span>About</a>
+      <a href="#projects"><span class="num">02</span>Projects</a>
+      <a href="#github"><span class="num">03</span>GitHub</a>
+      <a href="#certifications"><span class="num">04</span>Certs</a>
+      <a href="#experience"><span class="num">05</span>Experience</a>
+      <a href="#demo"><span class="num">06</span>Live Demo</a>
+      <a href="#contact"><span class="num">07</span>Contact</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="mesh-bg" id="meshBg">
+    <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
+  </div>
+  <div class="wrap hero-grid">
+    <div>
+      <div class="eyebrow">Software Engineer · AI / ML · Data Pipelines</div>
+      <h1 id="heroHeading">Sahil Shivgan builds systems that <span class="grad-text">watch data move.</span></h1>
+      <p class="lead">CS engineering graduate specializing in AI &amp; ML. I design real-time pipelines, train and serve models, and build the dashboards that keep them honest — from Kafka streams to production monitoring.</p>
+      <div class="cta-row">
+        <a class="btn btn-primary magnet" href="#projects">View Projects →</a>
+        <a class="btn btn-ghost magnet" href="https://github.com/Sahilshivgan" target="_blank" rel="noopener">GitHub</a>
+        <a class="btn btn-ghost magnet" href="https://linkedin.com/in/sahil-shivgan-engineer25" target="_blank" rel="noopener">LinkedIn</a>
+      </div>
+    </div>
+
+    <div class="pipeline-panel tilt">
+      <div class="pipeline-head">
+        <span>fraud-detection-pipeline / live</span>
+        <span class="live"><span class="dot"></span>STREAMING</span>
+      </div>
+      <svg class="pipeline-svg" viewBox="0 0 460 150">
+        <defs>
+          <linearGradient id="lineGrad" x1="0" x2="1"><stop offset="0" stop-color="#4fd1ff"/><stop offset="1" stop-color="#a78bfa"/></linearGradient>
+        </defs>
+        <line x1="45" y1="35" x2="415" y2="35" stroke="url(#lineGrad)" stroke-width="1.5" opacity=".5"/>
+        <rect class="node-box" x="10" y="18" width="70" height="34" rx="6"/>
+        <text class="node-label" x="45" y="39">KAFKA</text>
+        <rect class="node-box" x="120" y="18" width="70" height="34" rx="6"/>
+        <text class="node-label" x="155" y="39">SPARK</text>
+        <rect class="node-box" x="230" y="18" width="70" height="34" rx="6"/>
+        <text class="node-label" x="265" y="39">MLFLOW</text>
+        <rect class="node-box" x="340" y="18" width="80" height="34" rx="6"/>
+        <text class="node-label" x="380" y="39">FASTAPI</text>
+        <circle id="flowDot" class="flow-dot" cx="45" cy="35" r="4"/>
+        <text x="45" y="80" class="node-label" fill="#526270" font-size="9">producer.py</text>
+        <text x="155" y="80" class="node-label" fill="#526270" font-size="9">windowed feats</text>
+        <text x="265" y="80" class="node-label" fill="#526270" font-size="9">xgboost v2</text>
+        <text x="380" y="80" class="node-label" fill="#526270" font-size="9">/predict</text>
+      </svg>
+      <div class="stat-row">
+        <div class="stat"><div class="v mono" id="txnCount">0</div><div class="l">txns scored</div></div>
+        <div class="stat"><div class="v green mono" id="aucStat">0.970</div><div class="l">auc-roc</div></div>
+        <div class="stat"><div class="v amber mono" id="fraudScore">0.02</div><div class="l">fraud score</div></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<section id="about">
+  <div class="wrap about-grid">
+    <div class="reveal">
+      <div class="section-head"><span class="idx">01</span><h2>About</h2></div>
+      <p>I'm a <strong>B.E. Computer Science Engineering</strong> graduate (AI &amp; ML specialization) from Finolex Academy of Management &amp; Technology, Pune. I like problems with moving parts — streaming data, models that need to be trained and re-trained, systems that need to prove they still work.</p>
+      <p>My recent focus has been building an <strong>end-to-end, production-shaped fraud detection system</strong> from scratch: ingestion, feature engineering, model training and registry, serving, and monitoring — all containerized, all observable. Alongside that, I've worked on <strong>test automation frameworks</strong> and spent time in <strong>industry environments</strong> shipping CI/CD and Agile workflows.</p>
+      <p>I care about code that is <strong>segregated, reusable, and honest about its own failures</strong> — the same standard I hold my pipelines to.</p>
+    </div>
+    <div class="fact-list reveal">
+      <div class="f-row"><span class="f-k">DEGREE</span><span class="f-v">B.E. CSE (AI&amp;ML), 2025<br>CGPA 7.26</span></div>
+      <div class="f-row"><span class="f-k">PRIOR</span><span class="f-v">Diploma, Computer Eng.<br>CGPA 8.5</span></div>
+      <div class="f-row"><span class="f-k">BASED IN</span><span class="f-v">Pune, Maharashtra</span></div>
+      <div class="f-row"><span class="f-k">FOCUS</span><span class="f-v">SWE · Data Eng · QA/Automation</span></div>
+      <div class="f-row"><span class="f-k">STACK</span><span class="f-v">Python · Java · Kafka · Spark</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FLAGSHIP PROJECTS ONLY (experience moved out) ============ -->
+<section id="projects">
+  <div class="wrap">
+    <div class="section-head reveal"><span class="idx">02</span><h2>Flagship Projects</h2></div>
+
+    <div class="project tilt reveal">
+      <svg class="illustration" viewBox="0 0 600 170" preserveAspectRatio="xMidYMid slice">
+        <rect width="600" height="170" fill="#17212d"/>
+        <g opacity=".9">
+          <circle cx="80" cy="60" r="5" fill="#4fd1ff"/><circle cx="200" cy="40" r="4" fill="#a78bfa"/>
+          <circle cx="320" cy="90" r="6" fill="#34d399"/><circle cx="450" cy="55" r="4" fill="#f472b6"/>
+          <circle cx="540" cy="100" r="5" fill="#fbbf24"/><circle cx="150" cy="120" r="3" fill="#4fd1ff"/>
+          <circle cx="400" cy="130" r="4" fill="#a78bfa"/>
+          <path d="M80 60 L200 40 L320 90 L450 55 L540 100" stroke="#4fd1ff" stroke-width="1" fill="none" opacity=".4"/>
+          <path d="M150 120 L320 90 L400 130" stroke="#a78bfa" stroke-width="1" fill="none" opacity=".4"/>
+        </g>
+      </svg>
+      <div class="project-top">
+        <div>
+          <h3>Real-Time Fraud Detection Pipeline</h3>
+          <div class="stack">Kafka · Spark Structured Streaming · PostgreSQL · XGBoost · MLflow · FastAPI · Prometheus · Grafana · Streamlit</div>
+        </div>
+        <a class="link" href="https://github.com/Sahilshivgan/fraud-detection-pipeline" target="_blank" rel="noopener">View Repo →</a>
+      </div>
+      <p class="desc">An end-to-end, production-shaped MLOps system: transactions stream through Kafka, Spark computes windowed features (rolling transaction count, average amount) into a Postgres feature store, an XGBoost model trained on the real Kaggle credit-card fraud dataset is registered in MLflow, and a FastAPI service serves live predictions — all instrumented with Prometheus/Grafana and a Streamlit dashboard, shipped with GitHub Actions CI/CD.</p>
+      <div class="arch-strip">
+        <span class="a-step">Producer</span><span class="a-arrow">→</span>
+        <span class="a-step">Kafka</span><span class="a-arrow">→</span>
+        <span class="a-step">Spark (windowed)</span><span class="a-arrow">→</span>
+        <span class="a-step">Postgres</span><span class="a-arrow">→</span>
+        <span class="a-step">MLflow registry</span><span class="a-arrow">→</span>
+        <span class="a-step">FastAPI /predict</span><span class="a-arrow">→</span>
+        <span class="a-step">Grafana</span>
+      </div>
+      <div class="metrics">
+        <div class="metric"><div class="mv" data-count="0.812">0</div><div class="ml">Precision</div></div>
+        <div class="metric"><div class="mv" data-count="0.837">0</div><div class="ml">Recall</div></div>
+        <div class="metric"><div class="mv" data-count="0.970">0</div><div class="ml">AUC-ROC</div></div>
+        <div class="metric"><div class="mv" data-count="0.870">0</div><div class="ml">AUC-PR</div></div>
+      </div>
+    </div>
+
+    <div class="project tilt reveal">
+      <svg class="illustration" viewBox="0 0 600 170" preserveAspectRatio="xMidYMid slice">
+        <rect width="600" height="170" fill="#17212d"/>
+        <g opacity=".9" fill="none" stroke-width="1.5">
+          <rect x="60" y="40" width="90" height="60" rx="6" stroke="#34d399" opacity=".6"/>
+          <rect x="200" y="30" width="90" height="60" rx="6" stroke="#4fd1ff" opacity=".6"/>
+          <rect x="340" y="50" width="90" height="60" rx="6" stroke="#f472b6" opacity=".6"/>
+          <rect x="470" y="35" width="90" height="60" rx="6" stroke="#fbbf24" opacity=".6"/>
+          <path d="M150 70 L200 60" stroke="#526270"/><path d="M290 60 L340 80" stroke="#526270"/><path d="M430 80 L470 65" stroke="#526270"/>
+        </g>
+      </svg>
+      <div class="project-top">
+        <div>
+          <h3>Bhaane Test Automation Framework</h3>
+          <div class="stack">Java · Selenium · TestNG · Page Object Model</div>
+        </div>
+      </div>
+      <p class="desc">A full Java + TestNG + POM automation framework built against bhaane.com — covering authentication flow scripts, bug verification, and utility handling like automated newsletter-popup dismissal, structured for maintainability across page objects.</p>
+      <div class="tags"><span class="tag">POM</span><span class="tag">TestNG</span><span class="tag">Auth Testing</span><span class="tag">Bug Verification</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ LIVE GITHUB REPOS ============ -->
+<section id="github">
+  <div class="wrap">
+    <div class="section-head reveal"><span class="idx">03</span><h2>From GitHub — Live</h2></div>
+    <div class="gh-grid" id="ghGrid">
+      <div class="gh-skel"></div><div class="gh-skel"></div><div class="gh-skel"></div>
+    </div>
+    <div class="gh-status" id="ghStatus"></div>
+  </div>
+</section>
+
+<!-- ============ CERTIFICATIONS ============ -->
+<section id="certifications">
+  <div class="wrap">
+    <div class="section-head reveal"><span class="idx">04</span><h2>Certifications</h2></div>
+    <div class="cert-grid" id="certGrid"></div>
+    <div class="cert-edit-note">Edit the <span style="color:var(--cyan)">certifications</span> array in the CONFIG block at the top of this file to add your real certificates.</div>
+  </div>
+</section>
+
+<section id="experience">
+  <div class="wrap">
+    <div class="section-head reveal"><span class="idx">05</span><h2>Experience &amp; Education</h2></div>
+    <div class="timeline">
+      <div class="t-item reveal">
+        <div class="t-date">2024</div>
+        <div>
+          <h3>Software &amp; Automation Engineering Intern</h3>
+          <div class="t-org">Zensar Technologies · Aug – Oct 2024</div>
+          <p>Built and maintained automated test suites (Selenium, C#) integrated into Azure DevOps CI/CD pipelines within an Agile team.</p>
+        </div>
+      </div>
+      <div class="t-item reveal">
+        <div class="t-date">Prior</div>
+        <div>
+          <h3>AI/ML Intern</h3>
+          <div class="t-org">Pantech Solutions</div>
+          <p>Hands-on machine learning internship covering core ML fundamentals and applied model-building.</p>
+        </div>
+      </div>
+      <div class="t-item reveal">
+        <div class="t-date">2025</div>
+        <div>
+          <h3>B.E. Computer Science Engineering — AI &amp; ML</h3>
+          <div class="t-org">Finolex Academy of Management &amp; Technology, Pune</div>
+          <p>CGPA 7.26.</p>
+        </div>
+      </div>
+      <div class="t-item reveal">
+        <div class="t-date">Earlier</div>
+        <div>
+          <h3>Diploma in Computer Engineering</h3>
+          <div class="t-org">CGPA 8.5</div>
+          <p>Foundation in core computer engineering before specializing in AI/ML.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ LIVE DEMO PANEL ============ -->
+<section id="demo">
+  <div class="wrap">
+    <div class="section-head reveal"><span class="idx">06</span><h2>Live Demo</h2></div>
+    <div class="demo-panel reveal">
+      <div class="demo-frame-wrap">
+        <iframe id="demoIframe" title="Live fraud detection dashboard" loading="lazy"></iframe>
+        <div class="demo-empty" id="demoEmpty">
+          <div class="ico">▶</div>
+          <h4>Run the real pipeline, then embed it here</h4>
+          <p>Set <code class="mono">liveDemoUrl</code> in the CONFIG block to a public URL and this panel will load your actual Streamlit dashboard.</p>
+        </div>
+      </div>
+      <ul class="demo-steps">
+        <li>1. In VS Code terminal, from the project folder: <code>docker compose up -d</code></li>
+        <li>2. Start the dashboard: <code>streamlit run dashboard.py</code></li>
+        <li>3. Expose it publicly: <code>ngrok http 8501</code> (or <code>npx localtunnel --port 8501</code>)</li>
+        <li>4. Copy the generated https URL into <code>SITE_CONFIG.liveDemoUrl</code> in this file's CONFIG block near the top</li>
+        <li>5. Reload this page — the panel above will show your real, running dashboard</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="contact" class="contact">
+  <div class="wrap">
+    <div class="eyebrow" style="justify-content:center; display:flex; color:var(--cyan);">Get in touch</div>
+    <h2>Let's build something that scales.</h2>
+    <p>Open to Software Engineering, Data Engineering, and QA/Automation roles.</p>
+    <div class="contact-links">
+      <a class="btn btn-primary magnet" href="https://linkedin.com/in/sahil-shivgan-engineer25" target="_blank" rel="noopener">LinkedIn →</a>
+      <a class="btn btn-ghost magnet" href="https://github.com/Sahilshivgan" target="_blank" rel="noopener">GitHub →</a>
+    </div>
+  </div>
+</section>
+
+<footer>© 2026 Sahil Shivgan — built with HTML/CSS/JS + GSAP, no framework overhead.</footer>
+
+<script>
+(function(){
+  "use strict";
+  var CFG = window.SITE_CONFIG;
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---------- hero live counters ---------- */
+  function initHeroStats(){
+    var txnEl = document.getElementById('txnCount');
+    var fraudEl = document.getElementById('fraudScore');
+    var txn = 128430;
+    function tick(){
+      txn += Math.floor(Math.random()*4)+1;
+      txnEl.textContent = txn.toLocaleString();
+      fraudEl.textContent = (Math.random()*0.06).toFixed(2);
+    }
+    tick();
+    if(!reduceMotion) setInterval(tick, 1400);
+    var dot = document.getElementById('flowDot');
+    var stops = [45,155,265,380], idx = 0;
+    if(!reduceMotion) setInterval(function(){ idx=(idx+1)%stops.length; dot.setAttribute('cx', stops[idx]); }, 900);
+  }
+
+  /* ---------- animated gradient mesh drift ---------- */
+  function initMesh(){
+    if(reduceMotion || !window.gsap) return;
+    gsap.to('.b1', {x:40, y:30, duration:9, repeat:-1, yoyo:true, ease:'sine.inOut'});
+    gsap.to('.b2', {x:-30, y:40, duration:11, repeat:-1, yoyo:true, ease:'sine.inOut'});
+    gsap.to('.b3', {x:20, y:-30, duration:8, repeat:-1, yoyo:true, ease:'sine.inOut'});
+  }
+
+  /* ---------- hero heading stagger-in ---------- */
+  function initHeroReveal(){
+    if(!window.gsap) return;
+    gsap.from('.hero .eyebrow, .hero h1, .hero p.lead, .hero .cta-row, .pipeline-panel', {
+      y:24, opacity:0, duration:.8, stagger:.12, ease:'power3.out'
+    });
+  }
+
+  /* ---------- scroll reveal for sections ---------- */
+  function initScrollReveal(){
+    if(!window.gsap || !window.ScrollTrigger) { document.querySelectorAll('.reveal').forEach(function(el){el.style.opacity=1; el.style.transform='none';}); return; }
+    gsap.registerPlugin(ScrollTrigger);
+    document.querySelectorAll('.reveal').forEach(function(el){
+      gsap.to(el, {opacity:1, y:0, duration:.7, ease:'power2.out',
+        scrollTrigger:{trigger:el, start:'top 88%'}});
+    });
+  }
+
+  /* ---------- animated number counters on scroll ---------- */
+  function initCounters(){
+    var els = document.querySelectorAll('.mv[data-count]');
+    if(!window.gsap || !window.ScrollTrigger){ els.forEach(function(e){e.textContent=e.dataset.count;}); return; }
+    els.forEach(function(el){
+      var target = parseFloat(el.dataset.count);
+      ScrollTrigger.create({
+        trigger: el, start:'top 90%', once:true,
+        onEnter:function(){
+          var obj = {v:0};
+          gsap.to(obj, {v:target, duration:1.1, ease:'power1.out', onUpdate:function(){ el.textContent = obj.v.toFixed(3); }});
+        }
+      });
+    });
+  }
+
+  /* ---------- magnetic buttons ---------- */
+  function initMagnet(){
+    if(reduceMotion || !window.gsap) return;
+    document.querySelectorAll('.magnet').forEach(function(btn){
+      var qx = gsap.quickTo(btn, 'x', {duration:.3, ease:'power3.out'});
+      var qy = gsap.quickTo(btn, 'y', {duration:.3, ease:'power3.out'});
+      btn.addEventListener('mousemove', function(e){
+        var r = btn.getBoundingClientRect();
+        qx((e.clientX - r.left - r.width/2) * .3);
+        qy((e.clientY - r.top - r.height/2) * .3);
+      });
+      btn.addEventListener('mouseleave', function(){ qx(0); qy(0); });
+    });
+  }
+
+  /* ---------- 3D tilt on project/pipeline cards ---------- */
+  function initTilt(){
+    if(reduceMotion) return;
+    document.querySelectorAll('.tilt').forEach(function(card){
+      card.style.transformStyle='preserve-3d';
+      card.addEventListener('mousemove', function(e){
+        var r = card.getBoundingClientRect();
+        var px = (e.clientX - r.left) / r.width - .5;
+        var py = (e.clientY - r.top) / r.height - .5;
+        card.style.transform = 'perspective(700px) rotateY('+(px*5)+'deg) rotateX('+(py*-5)+'deg)';
+      });
+      card.addEventListener('mouseleave', function(){ card.style.transform = 'perspective(700px) rotateY(0) rotateX(0)'; });
+    });
+  }
+
+  /* ---------- certifications render ---------- */
+  function initCertifications(){
+    var grid = document.getElementById('certGrid');
+    var html = CFG.certifications.map(function(c){
+      return '<div class="cert-card reveal"><div class="cert-badge">'+c.tag+'</div>'+
+        '<div><h4>'+c.name+'</h4><div class="c-org">'+c.org+'</div><div class="c-date">'+c.date+'</div></div></div>';
+    }).join('');
+    grid.innerHTML = html;
+  }
+
+  /* ---------- live GitHub repos ---------- */
+  function initGithub(){
+    var grid = document.getElementById('ghGrid');
+    var status = document.getElementById('ghStatus');
+    fetch('https://api.github.com/users/'+CFG.githubUsername+'/repos?sort=updated&per_page='+CFG.githubRepoCount)
+      .then(function(res){ if(!res.ok) throw new Error('GitHub API returned ' + res.status); return res.json(); })
+      .then(function(repos){
+        if(!repos.length){ grid.innerHTML=''; status.textContent='No public repos found.'; return; }
+        grid.innerHTML = repos.map(function(r){
+          return '<a class="gh-card" href="'+r.html_url+'" target="_blank" rel="noopener">'+
+            '<h4>'+r.name+'</h4>'+
+            '<p>'+(r.description ? r.description.replace(/</g,'&lt;') : 'No description provided.')+'</p>'+
+            '<div class="gh-meta"><span>★ '+r.stargazers_count+'</span><span>'+(r.language||'—')+'</span><span>Updated '+new Date(r.updated_at).toLocaleDateString()+'</span></div>'+
+            '</a>';
+        }).join('');
+        status.textContent = 'Fetched live from github.com/'+CFG.githubUsername;
+      })
+      .catch(function(err){
+        grid.innerHTML = '';
+        status.textContent = 'Could not fetch GitHub repos right now (' + err.message + '). Visit github.com/'+CFG.githubUsername+' directly.';
+      });
+  }
+
+  /* ---------- live demo iframe wiring ---------- */
+  function initDemo(){
+    var iframe = document.getElementById('demoIframe');
+    var empty = document.getElementById('demoEmpty');
+    if(CFG.liveDemoUrl){
+      iframe.src = CFG.liveDemoUrl;
+      iframe.style.display = 'block';
+      empty.style.display = 'none';
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', function(){
+    initHeroStats();
+    initMesh();
+    initHeroReveal();
+    initScrollReveal();
+    initCounters();
+    initMagnet();
+    initTilt();
+    initCertifications();
+    initGithub();
+    initDemo();
+  });
+})();
+</script>
+</body>
+</html>
